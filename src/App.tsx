@@ -1,9 +1,7 @@
-import BoardWrapper from "./components/gameWrapper";
+import GameWrapper from "./components/gameWrapper";
 
 function App() {
-  return (
-    <BoardWrapper />
-  );
+  return <GameWrapper />;
 }
 
 export default App;
