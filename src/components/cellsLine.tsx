@@ -2,7 +2,7 @@ import Cell from "./cell";
 
 const CellsLine = () => {
   return (
-    <div className="flex">
+    <div className="flex gap-1 w-full fix-tile-width">
       <Cell letter={"W"} />
       <Cell letter={"O"} />
       <Cell letter={"R"} />

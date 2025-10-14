@@ -2,13 +2,15 @@ import CellsLine from "./cellsLine";
 
 const Board = () => {
   return (
-    <div className="flex flex-col">
-      <CellsLine />
-      <CellsLine />
-      <CellsLine />
-      <CellsLine />
-      <CellsLine />
-      <CellsLine />
+    <div className="flex justify-center items-center">
+      <div className="flex flex-col gap-1 p-3 box-border fix-h fix-small-iphones-grid w-full max-w-[360px] max-h-[480px]">
+        <CellsLine />
+        <CellsLine />
+        <CellsLine />
+        <CellsLine />
+        <CellsLine />
+        <CellsLine />
+      </div>
     </div>
   );
 };

@@ -17,9 +17,9 @@ const Cell = ({ letter }: CellProps) => {
         font-bold 
         select-none 
         border-2 
-      border-neutral-300 
-      dark:text-white 
-      dark:border-neutral-700
+        border-neutral-300 
+        dark:text-white 
+        dark:border-neutral-700
       "
     >
       {letter}
