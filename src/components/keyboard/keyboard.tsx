@@ -3,9 +3,10 @@ import Key from "./key";
 type KeyboardProps = {
   onKeyboardInput: (letter: string) => void;
   onDelete: () => void;
+  onCheck: () => void;
 };
 
-const Keyboard = ({ onKeyboardInput, onDelete }: KeyboardProps) => {
+const Keyboard = ({ onKeyboardInput, onDelete, onCheck }: KeyboardProps) => {
   const firstLine = [
     "й",
     "ц",
@@ -25,16 +26,18 @@ const Keyboard = ({ onKeyboardInput, onDelete }: KeyboardProps) => {
   return (
     <div className="flex flex-col container w-full max-w-lg pb-2 md:pb-5 px-2 mx-auto">
       <div className="flex">
-        {firstLine.map((symbol) => (
+        {firstLine.map((symbol, index) => (
           <Key
+            key={index}
             letter={symbol}
             handleClick={(letter) => onKeyboardInput(letter)}
           ></Key>
         ))}
       </div>
       <div className="flex">
-        {middleLine.map((symbol) => (
+        {middleLine.map((symbol, index) => (
           <Key
+            key={index}
             letter={symbol}
             handleClick={(letter) => onKeyboardInput(letter)}
           ></Key>
@@ -42,16 +45,14 @@ const Keyboard = ({ onKeyboardInput, onDelete }: KeyboardProps) => {
       </div>
       <div className="flex">
         <Key letter="<=" handleClick={onDelete}></Key>
-        {lastLine.map((symbol) => (
+        {lastLine.map((symbol, index) => (
           <Key
+            key={index}
             letter={symbol}
             handleClick={(letter) => onKeyboardInput(letter)}
           ></Key>
         ))}
-        <Key
-          letter="ввод"
-          handleClick={(letter) => onKeyboardInput(letter)}
-        ></Key>
+        <Key letter="ввод" handleClick={onCheck}></Key>
       </div>
     </div>
   );
