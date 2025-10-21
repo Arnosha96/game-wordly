@@ -25,8 +25,11 @@ const GameWrapper = () => {
 
   const handleDelete = useCallback(() => {
     const targetBoard = wordBoard.map((line, index) => {
-      if (index === activeLine) line.pop();
-      return line;
+      if (index === activeLine) {
+        return line.slice(0, -1);
+      } else {
+        return line;
+      }
     });
     setWordBoard(targetBoard);
   }, [wordBoard, activeLine]);
