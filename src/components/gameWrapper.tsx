@@ -11,7 +11,7 @@ export type keyboardColorsType = {
 };
 
 const GameWrapper = () => {
-  const [dayWord, setDayWord] = useState<string>();
+  const [dayWord, setDayWord] = useState<string>("");
   const [wordBoard, setWordBoard] = useState<string[][]>(new Array(6).fill([]));
   const [activeLine, setActiveLine] = useState<number>(0);
   const [wordsBank, setWordsBank] = useState<string[]>();
@@ -55,11 +55,40 @@ const GameWrapper = () => {
   const validate = useCallback(
     (word: string) => {
       if (word === dayWord) {
-        const greenLetters = new Set([...Object.values(keyboardColors.green), ...word.split('')])
-        setKeyboardColors({...keyboardColors, green: greenLetters})
+        const greenLetters = new Set([
+          ...Object.values(keyboardColors.green),
+          ...word.split(""),
+        ]);
+        setKeyboardColors({ ...keyboardColors, green: greenLetters });
         setGameStatus("Game Over");
+        return;
       }
-      setActiveLine(activeLine + 1);
+      let greenLetters = new Set<string>(keyboardColors.green);
+      let yellowLetters = new Set<string>(keyboardColors.yellow);
+      let greyLetters = new Set<string>(keyboardColors.grey);
+
+      word.split("").forEach((letter, index) => {
+        if (dayWord.includes(letter)) {
+          if (letter === dayWord[index]) {
+            greenLetters.add(letter);
+          } else {
+            yellowLetters.add(letter);
+          }
+        } else {
+          greyLetters.add(letter);
+        }
+      });
+      setKeyboardColors({
+        ...keyboardColors,
+        green: greenLetters,
+        yellow: yellowLetters,
+        grey: greyLetters,
+      });
+      if (activeLine === 5) {
+        setGameStatus("Game Over");
+      } else {
+        setActiveLine(activeLine + 1);
+      }
     },
     [activeLine, dayWord, keyboardColors],
   );
