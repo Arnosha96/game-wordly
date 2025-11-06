@@ -10,13 +10,25 @@ const CellsLine = ({ line }: CellsLineProps) => {
 
   useEffect(() => {
     const length = line.length;
-    const preLine: string[] = [...line, ...(new Array<string>(5 - length).fill(''))];
-    setTargetLine(preLine)
-  }, [line,setTargetLine ]);
+    const preLine: string[] = [
+      ...line,
+      ...new Array<string>(5 - length).fill(""),
+    ];
+    setTargetLine(preLine);
+  }, [line, setTargetLine]);
 
   return (
     <div className="flex h-full max-h-20 gap-1 w-full fix-tile-width">
-      {targetLine.map((simbol, index)=> <Cell key={index} letter={simbol} />)}
+      {targetLine.map((simbol, index) => {
+        const [letter, color] = simbol.split(":");
+        return (
+          <Cell
+            key={index}
+            letter={letter}
+            cellColor={color ? (color as "G" | "Y" | "B" | "D") : "D"}
+          />
+        );
+      })}
     </div>
   );
 };

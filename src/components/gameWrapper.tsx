@@ -5,7 +5,7 @@ import Header from "./header/header";
 import Keyboard from "./keyboard/keyboard";
 
 export type keyboardColorsType = {
-  grey: Set<string>;
+  black: Set<string>;
   yellow: Set<string>;
   green: Set<string>;
 };
@@ -19,14 +19,14 @@ const GameWrapper = () => {
     "In Progress",
   );
   const [keyboardColors, setKeyboardColors] = useState<keyboardColorsType>({
-    grey: new Set(),
+    black: new Set(),
     yellow: new Set(),
     green: new Set(),
   });
 
   const handleKeyboardInput = useCallback(
     (letter: string) => {
-      if (gameStatus === "In Progress") {
+      if (gameStatus === "In Progress" && wordBoard[activeLine].length !== 5) {
         const targetBoard = wordBoard.map((arr, index) => {
           if (index === activeLine) {
             return [...arr, letter];
@@ -59,13 +59,26 @@ const GameWrapper = () => {
           ...Object.values(keyboardColors.green),
           ...word.split(""),
         ]);
+        console.log(wordBoard);
+        setWordBoard(
+          wordBoard.map((arr, index) => {
+            if (index === activeLine) {
+              console.log("qwe", arr);
+              console.log(wordBoard);
+              console.log("asd", wordBoard[activeLine + 1]);
+              return arr.map((val) => (val += ":G"));
+            } else {
+              return arr;
+            }
+          }),
+        );
         setKeyboardColors({ ...keyboardColors, green: greenLetters });
         setGameStatus("Game Over");
         return;
       }
       let greenLetters = new Set<string>(keyboardColors.green);
       let yellowLetters = new Set<string>(keyboardColors.yellow);
-      let greyLetters = new Set<string>(keyboardColors.grey);
+      let blackLetters = new Set<string>(keyboardColors.black);
 
       word.split("").forEach((letter, index) => {
         if (dayWord.includes(letter)) {
@@ -75,14 +88,14 @@ const GameWrapper = () => {
             yellowLetters.add(letter);
           }
         } else {
-          greyLetters.add(letter);
+          blackLetters.add(letter);
         }
       });
       setKeyboardColors({
         ...keyboardColors,
         green: greenLetters,
         yellow: yellowLetters,
-        grey: greyLetters,
+        black: blackLetters,
       });
       if (activeLine === 5) {
         setGameStatus("Game Over");
@@ -90,7 +103,7 @@ const GameWrapper = () => {
         setActiveLine(activeLine + 1);
       }
     },
-    [activeLine, dayWord, keyboardColors],
+    [activeLine, dayWord, keyboardColors, wordBoard],
   );
 
   const handleCheck = useCallback(() => {

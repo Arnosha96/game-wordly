@@ -1,16 +1,10 @@
 import clsx from "clsx";
+import { styleMap } from "../../mappers/styleMapper";
 
 type KeyProps = {
   letter: string;
   handleClick: (letter: string) => void;
-  keyStyle: "green" | "yellow" | "grey" | "basic";
-};
-
-const styleMap = {
-  green: 'bg-[#6AAA64]',
-  yellow: 'bg-[#C9B458]',
-  grey: 'bg-[#787C7E]',
-  basic: 'bg-[#D3D6DA]',
+  keyStyle: "G" | "Y" | "B" | "D";
 };
 
 const Key = ({ letter, handleClick, keyStyle }: KeyProps) => {

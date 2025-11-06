@@ -33,12 +33,12 @@ const Keyboard = ({
 
   const keyStyleCheck = (symbol: string) => {
     return keyboardColors.green.has(symbol)
-      ? "green"
+      ? "G"
       : keyboardColors.yellow.has(symbol)
-        ? "yellow"
-        : keyboardColors.grey.has(symbol)
-          ? "grey"
-          : 'basic';
+        ? "Y"
+        : keyboardColors.black.has(symbol)
+          ? "B"
+          : "D";
   };
 
   return (
@@ -66,7 +66,7 @@ const Keyboard = ({
         ))}
       </div>
       <div className="flex">
-        <Key letter="<=" handleClick={onDelete} keyStyle="basic"></Key>
+        <Key letter="<=" handleClick={onDelete} keyStyle="D"></Key>
         {lastLine.map((symbol, index) => (
           <Key
             key={index}
@@ -75,7 +75,7 @@ const Keyboard = ({
             keyStyle={keyStyleCheck(symbol)}
           ></Key>
         ))}
-        <Key letter="ввод" handleClick={onCheck} keyStyle="basic"></Key>
+        <Key letter="ввод" handleClick={onCheck} keyStyle="D"></Key>
       </div>
     </div>
   );
