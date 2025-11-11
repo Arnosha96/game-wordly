@@ -27,13 +27,9 @@ const GameWrapper = () => {
   const handleKeyboardInput = useCallback(
     (letter: string) => {
       if (gameStatus === "In Progress" && wordBoard[activeLine].length !== 5) {
-        const targetBoard = wordBoard.map((arr, index) => {
-          if (index === activeLine) {
-            return [...arr, letter];
-          } else {
-            return arr;
-          }
-        });
+        const targetBoard = wordBoard.map((arr, index) =>
+          index === activeLine ? [...arr, letter] : arr,
+        );
         setWordBoard(targetBoard);
       } else return;
     },
@@ -42,61 +38,63 @@ const GameWrapper = () => {
   );
 
   const handleDelete = useCallback(() => {
-    const targetBoard = wordBoard.map((line, index) => {
-      if (index === activeLine) {
-        return line.slice(0, -1);
-      } else {
-        return line;
-      }
-    });
+    const targetBoard = wordBoard.map((line, index) =>
+      index === activeLine ? line.slice(0, -1) : line,
+    );
     setWordBoard(targetBoard);
   }, [wordBoard, activeLine]);
 
   const validate = useCallback(
     (word: string) => {
-      if (word === dayWord) {
-        const greenLetters = new Set([
-          ...Object.values(keyboardColors.green),
-          ...word.split(""),
-        ]);
-        console.log(wordBoard);
-        setWordBoard(
-          wordBoard.map((arr, index) => {
-            if (index === activeLine) {
-              console.log("qwe", arr);
-              console.log(wordBoard);
-              console.log("asd", wordBoard[activeLine + 1]);
-              return arr.map((val) => (val += ":G"));
-            } else {
-              return arr;
-            }
-          }),
-        );
-        setKeyboardColors({ ...keyboardColors, green: greenLetters });
-        setGameStatus("Game Over");
-        return;
-      }
-      let greenLetters = new Set<string>(keyboardColors.green);
-      let yellowLetters = new Set<string>(keyboardColors.yellow);
-      let blackLetters = new Set<string>(keyboardColors.black);
+      const greenLetters = keyboardColors.green;
+      const yellowLetters = keyboardColors.yellow;
+      const blackLetters = keyboardColors.black;
 
-      word.split("").forEach((letter, index) => {
-        if (dayWord.includes(letter)) {
-          if (letter === dayWord[index]) {
-            greenLetters.add(letter);
-          } else {
-            yellowLetters.add(letter);
-          }
+      const target = dayWord.split("");
+      const guess = word.split("");
+      const result: string[] = new Array(5);
+
+      const remainingLetters: string[] = [];
+
+      for (let i = 0; i < 5; i++) {
+        if (guess[i] === target[i]) {
+          result[i] = `${guess[i]}:G`;
+          greenLetters.add(guess[i]);
+          target[i] = "";
         } else {
-          blackLetters.add(letter);
+          remainingLetters.push(target[i]);
         }
-      });
+      }
+
+      for (let i = 0; i < 5; i++) {
+        if (result[i]) continue;
+
+        const letterIndex = remainingLetters.indexOf(guess[i]);
+        if (letterIndex !== -1) {
+          result[i] = `${guess[i]}:Y`;
+          yellowLetters.add(guess[i]);
+          remainingLetters.splice(letterIndex, 1);
+        } else {
+          result[i] = `${guess[i]}:B`;
+          blackLetters.add(guess[i]);
+        }
+      }
+
+      setWordBoard(
+        wordBoard.map((arr, index) => (index === activeLine ? result : arr)),
+      );
+
       setKeyboardColors({
-        ...keyboardColors,
         green: greenLetters,
         yellow: yellowLetters,
         black: blackLetters,
       });
+
+      if (word === dayWord) {
+        setGameStatus("Game Over");
+        return;
+      }
+
       if (activeLine === 5) {
         setGameStatus("Game Over");
       } else {
@@ -123,7 +121,7 @@ const GameWrapper = () => {
 
   useEffect(() => {
     setWordsBank(words);
-    setDayWord(getRandomWord());
+    setDayWord('обход');
     console.log(dayWord);
   }, [dayWord]);
 
