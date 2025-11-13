@@ -1,13 +1,20 @@
-import { useCallback, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { getRandomWord, words } from "../resources/words";
 import Board from "./board/board";
 import Header from "./header/header";
 import Keyboard from "./keyboard/keyboard";
+import { ConfigProvider, message, Modal } from "antd";
 
 export type keyboardColorsType = {
   black: Set<string>;
   yellow: Set<string>;
   green: Set<string>;
+};
+
+type alertStateType = {
+  isAlertOpen?: boolean;
+  alertTitle?: string;
+  alertContent: ReactNode;
 };
 
 const GameWrapper = () => {
@@ -23,6 +30,8 @@ const GameWrapper = () => {
     yellow: new Set(),
     green: new Set(),
   });
+  const [alertStates, setAlertStates] = useState<alertStateType>();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const handleKeyboardInput = useCallback(
     (letter: string) => {
@@ -38,11 +47,13 @@ const GameWrapper = () => {
   );
 
   const handleDelete = useCallback(() => {
-    const targetBoard = wordBoard.map((line, index) =>
-      index === activeLine ? line.slice(0, -1) : line,
-    );
-    setWordBoard(targetBoard);
-  }, [wordBoard, activeLine]);
+    if (gameStatus === "In Progress") {
+      const targetBoard = wordBoard.map((line, index) =>
+        index === activeLine ? line.slice(0, -1) : line,
+      );
+      setWordBoard(targetBoard);
+    }
+  }, [wordBoard, activeLine, gameStatus]);
 
   const validate = useCallback(
     (word: string) => {
@@ -92,11 +103,21 @@ const GameWrapper = () => {
 
       if (word === dayWord) {
         setGameStatus("Game Over");
+        setAlertStates({
+          isAlertOpen: true,
+          alertTitle: "WORDLE DAY #556",
+          alertContent: "Вы победили c " + activeLine + " попытки!",
+        });
         return;
       }
 
       if (activeLine === 5) {
         setGameStatus("Game Over");
+        setAlertStates({
+          isAlertOpen: true,
+          alertTitle: "WORDLE DAY #556",
+          alertContent: "Вы проиграли(",
+        });
       } else {
         setActiveLine(activeLine + 1);
       }
@@ -105,28 +126,45 @@ const GameWrapper = () => {
   );
 
   const handleCheck = useCallback(() => {
-    if (wordBoard[activeLine].length < 5) {
-      alert("В слове недостаточно букв" + wordBoard[activeLine].length);
-      return;
+    if (gameStatus === "In Progress") {
+      if (wordBoard[activeLine].length < 5) {
+        messageApi.open({
+          content: "В слове недостаточно букв!",
+        });
+        return;
+      }
+      const currentWord = wordBoard[activeLine].join("");
+      if (!wordsBank?.includes(currentWord)) {
+        messageApi.open({
+          content:
+            "В словаре игры нет такого слова, попробуйте другое слово! Например ПОКЕР",
+        });
+        return;
+      }
+      validate(currentWord);
     }
-    const currentWord = wordBoard[activeLine].join("");
-    if (!wordsBank?.includes(currentWord)) {
-      alert(
-        "В словаре игры нет такого слова, попробуйте другое слово! Например ПОКЕР",
-      );
-      return;
-    }
-    validate(currentWord);
-  }, [wordBoard, activeLine, wordsBank, validate]);
+  }, [wordBoard, activeLine, wordsBank, validate, messageApi, gameStatus]);
 
   useEffect(() => {
     setWordsBank(words);
-    setDayWord('обход');
+    setDayWord(getRandomWord());
     console.log(dayWord);
   }, [dayWord]);
 
   return (
     <div className="h-screen container mx-auto flex flex-col max-w-md">
+      <ConfigProvider
+        theme={{
+          components: {
+            Message: {
+              contentBg: "black",
+              colorText: "white",
+            },
+          },
+        }}
+      >
+        {contextHolder}
+      </ConfigProvider>
       <Header />
       <Board wordBoardLines={wordBoard} />
       <Keyboard
@@ -135,6 +173,15 @@ const GameWrapper = () => {
         onCheck={handleCheck}
         keyboardColors={keyboardColors}
       />
+      <Modal
+        title={alertStates?.alertTitle}
+        closable={{ "aria-label": "Custom Close Button" }}
+        open={alertStates?.isAlertOpen}
+        onCancel={() => setAlertStates(undefined)}
+        footer={null}
+      >
+        {alertStates?.alertContent}
+      </Modal>
     </div>
   );
 };
