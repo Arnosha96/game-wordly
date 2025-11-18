@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { styleMap } from "../../mappers/styleMapper";
+import { letterStyleMapper } from "../../mappers/styleMappers";
 
 type CellProps = {
   letter: string | undefined;
@@ -12,7 +12,7 @@ const Cell = ({ letter, cellColor }: CellProps) => {
       className={clsx(
         cellColor === "D"
           ? "text-black border-2"
-          : [styleMap[cellColor], "text-white"],
+          : [letterStyleMapper[cellColor], "text-white"],
         `w-full 
         h-full 
         inline-flex 

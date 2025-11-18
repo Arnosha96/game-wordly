@@ -1,9 +1,10 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { ConfigProvider, message, Modal } from "antd";
+import { useCallback, useEffect, useState } from "react";
 import { getRandomWord, words } from "../resources/words";
 import Board from "./board/board";
 import Header from "./header/header";
 import Keyboard from "./keyboard/keyboard";
-import { ConfigProvider, message, Modal } from "antd";
+import EndGamePopup from "./popups/endGamePopup";
 
 export type keyboardColorsType = {
   black: Set<string>;
@@ -11,13 +12,13 @@ export type keyboardColorsType = {
   green: Set<string>;
 };
 
-type alertStateType = {
-  isAlertOpen?: boolean;
-  alertTitle?: string;
-  alertContent: ReactNode;
+export type popupStateType = {
+  isPopupOpen?: boolean;
+  popupStatus: "WIN" | "LOSE";
 };
 
 const GameWrapper = () => {
+  const startDate = new Date("11.18.2025");
   const [dayWord, setDayWord] = useState<string>("");
   const [wordBoard, setWordBoard] = useState<string[][]>(new Array(6).fill([]));
   const [activeLine, setActiveLine] = useState<number>(0);
@@ -30,7 +31,7 @@ const GameWrapper = () => {
     yellow: new Set(),
     green: new Set(),
   });
-  const [alertStates, setAlertStates] = useState<alertStateType>();
+  const [popupStates, setPopupStates] = useState<popupStateType>();
   const [messageApi, contextHolder] = message.useMessage();
 
   const handleKeyboardInput = useCallback(
@@ -103,20 +104,18 @@ const GameWrapper = () => {
 
       if (word === dayWord) {
         setGameStatus("Game Over");
-        setAlertStates({
-          isAlertOpen: true,
-          alertTitle: "WORDLE DAY #556",
-          alertContent: "Вы победили c " + activeLine + " попытки!",
+        setPopupStates({
+          isPopupOpen: true,
+          popupStatus: "WIN",
         });
         return;
       }
 
       if (activeLine === 5) {
         setGameStatus("Game Over");
-        setAlertStates({
-          isAlertOpen: true,
-          alertTitle: "WORDLE DAY #556",
-          alertContent: "Вы проиграли(",
+        setPopupStates({
+          isPopupOpen: true,
+          popupStatus: "LOSE",
         });
       } else {
         setActiveLine(activeLine + 1);
@@ -174,13 +173,13 @@ const GameWrapper = () => {
         keyboardColors={keyboardColors}
       />
       <Modal
-        title={alertStates?.alertTitle}
+        title={`WORDLE DAY #${startDate.getDay()} ${activeLine + 1}/6`}
         closable={{ "aria-label": "Custom Close Button" }}
-        open={alertStates?.isAlertOpen}
-        onCancel={() => setAlertStates(undefined)}
+        open={popupStates?.isPopupOpen}
+        onCancel={() => setPopupStates(undefined)}
         footer={null}
       >
-        {alertStates?.alertContent}
+        <EndGamePopup wordBoardLines={wordBoard} popupStatus={popupStates?.popupStatus} />
       </Modal>
     </div>
   );

@@ -19,8 +19,8 @@ const CellsLine = ({ line }: CellsLineProps) => {
 
   return (
     <div className="flex h-full max-h-20 gap-1 w-full fix-tile-width">
-      {targetLine.map((simbol, index) => {
-        const [letter, color] = simbol.split(":");
+      {targetLine.map((symbol, index) => {
+        const [letter, color] = symbol.split(":");
         return (
           <Cell
             key={index}
