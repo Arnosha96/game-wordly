@@ -191,7 +191,7 @@ const GameWrapper = () => {
         keyboardColors={keyboardColors}
       />
       <Modal
-        title={`WORDLE DAY #${startDate.getDay()} ${activeLine + 1}/6`}
+        title={`WORDLE DAY #${Math.floor((Date.now() - startDate.getTime()) / (1000 * 60 * 60 * 24))} ${activeLine + 1}/6`}
         closable={{ "aria-label": "Custom Close Button" }}
         open={popupStates?.isPopupOpen}
         onCancel={() => setPopupStates(undefined)}
