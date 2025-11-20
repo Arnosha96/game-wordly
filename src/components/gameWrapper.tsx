@@ -150,6 +150,24 @@ const GameWrapper = () => {
     console.log(dayWord);
   }, [dayWord]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (/^[а-яё]$/i.test(e.key)) {
+        handleKeyboardInput(e.key);
+      }
+      if (e.key === "Backspace") {
+        handleDelete();
+      }
+      if (e.key === "Enter") {
+        handleCheck();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleCheck, handleDelete, handleKeyboardInput]);
+
   return (
     <div className="h-screen container mx-auto flex flex-col max-w-md">
       <ConfigProvider
@@ -179,7 +197,10 @@ const GameWrapper = () => {
         onCancel={() => setPopupStates(undefined)}
         footer={null}
       >
-        <EndGamePopup wordBoardLines={wordBoard} popupStatus={popupStates?.popupStatus} />
+        <EndGamePopup
+          wordBoardLines={wordBoard}
+          popupStatus={popupStates?.popupStatus}
+        />
       </Modal>
     </div>
   );
