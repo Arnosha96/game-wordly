@@ -5,6 +5,7 @@ import Board from "./board/board";
 import Header from "./header/header";
 import Keyboard from "./keyboard/keyboard";
 import EndGamePopup from "./popups/endGamePopup";
+import { latinToRussianMapper } from "../mappers/keyMapper";
 
 export type keyboardColorsType = {
   black: Set<string>;
@@ -154,13 +155,16 @@ const GameWrapper = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (/^[а-яё]$/i.test(e.key)) {
         handleKeyboardInput(e.key);
-      }
+      } else
+      if (latinToRussianMapper[e.key]) {
+        handleKeyboardInput(latinToRussianMapper[e.key])
+      }  else
       if (e.key === "Backspace") {
         handleDelete();
-      }
+      } else
       if (e.key === "Enter") {
         handleCheck();
-      }
+      } 
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => {
