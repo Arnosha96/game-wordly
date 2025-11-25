@@ -4,15 +4,19 @@ import { letterStyleMapper } from "../../mappers/styleMappers";
 type CellProps = {
   letter: string | undefined;
   cellColor: "G" | "Y" | "B" | "D";
+  indexInLine: number;
 };
 
-const Cell = ({ letter, cellColor }: CellProps) => {
+const Cell = ({ letter, cellColor, indexInLine }: CellProps) => {
   return (
     <div
       className={clsx(
         cellColor === "D"
           ? "text-black border-2"
-          : [letterStyleMapper[cellColor], "text-white"],
+          : [
+              letterStyleMapper[cellColor],
+              "text-white animate-spin-slow",
+            ],
         `w-full 
         h-full 
         inline-flex 
@@ -29,6 +33,11 @@ const Cell = ({ letter, cellColor }: CellProps) => {
         dark:border-neutral-700
         `,
       )}
+      style={
+        cellColor !== "D"
+          ? { animationDelay: `${indexInLine * 0.5}s`, backfaceVisibility: "hidden"}
+          : undefined
+      }
     >
       {letter}
     </div>
