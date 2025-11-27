@@ -12,9 +12,9 @@ const Cell = ({ letter, cellColor, indexInLine }: CellProps) => {
     <div
       className={clsx(
         cellColor === "D"
-          ? "text-black border-2"
+          ? ["text-black", "border-neutral-300"]
           : [
-              letterStyleMapper[cellColor],
+              `bg-[${letterStyleMapper[cellColor]}]`,
               "text-white animate-spin-slow",
             ],
         `w-full 
@@ -27,15 +27,17 @@ const Cell = ({ letter, cellColor, indexInLine }: CellProps) => {
         small:text-3xl 
         uppercase 
         font-bold 
+        border-2
         select-none 
-        border-neutral-300 
         dark:text-white 
-        dark:border-neutral-700
         `,
       )}
       style={
         cellColor !== "D"
-          ? { animationDelay: `${indexInLine * 0.5}s`, backfaceVisibility: "hidden"}
+          ? {
+              animationDelay: `${indexInLine * 0.4}s`,
+              borderColor: `${letterStyleMapper[cellColor]}`,
+            }
           : undefined
       }
     >

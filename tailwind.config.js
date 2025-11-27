@@ -1,33 +1,36 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       animation: {
-        'spin-slow': 'spin-slow 0.9s ease-out forwards',
+        "spin-slow": "spin-slow 0.6s ease-out forwards",
       },
       keyframes: {
-        'spin-slow': {
-          '0%': { transform: 'rotateX(0deg)',
-            color: 'black',
-            backgroundColor: 'white',
-            transition: `0.6s`
-           },
-          '30%': { transform: 'rotateX(54deg)',
-            backgroundColor: 'white',
-            transition: `0.9s`
-           },
-           '50%': { transform: 'rotateX(90deg)',
-             transition: `0.6s`
-           },
-          '70%': { transform: 'rotateX(54deg)',
-             transition: `0.6s`
-           },
-          '100%': { transform: 'rotateX(0deg)',
-             transition: `0.9s`
-           },
-        }
-      }
-    }
-  }
-}
+        "spin-slow": {
+          "0%": {
+            transform: "rotateX(0deg)",
+            color: "black",
+            backgroundColor: "white",
+            borderWidth: 2,
+            borderColor: '#d4d4d4'
+          },
+          "25%": {
+            transform: "rotateX(45deg)",
+            color: "black",
+            backgroundColor: "white",
+            borderWidth: 2,
+            borderColor: '#d4d4d4'
+          },
+          "40%": {
+            transform: "rotateX(90deg)",
+          },
+          "50%": { transform: "rotateX(90deg)" },
+          "60%": { transform: "rotateX(90deg)" },
+          "75%": { transform: "rotateX(45deg)" },
+          "100%": { transform: "rotateX(0deg)" },
+        },
+      },
+    },
+  },
+};

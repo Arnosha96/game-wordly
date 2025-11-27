@@ -1,8 +1,8 @@
 export const letterStyleMapper = {
-  G: "bg-[#6AAA64]",
-  Y: "bg-[#C9B458]",
-  B: "bg-[#787C7E]",
-  D: "bg-[#D3D6DA]",
+  G: "#6AAA64",
+  Y: "#C9B458",
+  B: "#787C7E",
+  D: "#D3D6DA",
 };
 
 export const resoultStyleMapper = {
