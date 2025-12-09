@@ -5,19 +5,19 @@ import { letterStyleMapper } from "../../mappers/styleMappers";
 type CellProps = {
   letter: string | undefined;
   cellColor: "G" | "Y" | "B" | "D";
-  qweasd: number;
+  indexInLine: number;
 };
 
-const Cell = ({ letter, cellColor, qweasd }: CellProps) => {
+const Cell = ({ letter, cellColor, indexInLine }: CellProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
     if (cellColor !== 'D') {
       setTimeout(() => {
         setIsFlipped(true);
-      }, qweasd * 200);
+      }, indexInLine * 200);
     }
-  }, [cellColor, qweasd]);
+  }, [cellColor, indexInLine]);
 
   return (
     <div
