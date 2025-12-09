@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --color-absent: 120 124 126;
+    --color-present: 201 180 88;
+    --color-correct: 106 170 100;
+    --key-bg: 211 214 218;
+}
+
+.bg-absent {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--color-absent)/var(--tw-bg-opacity))
+}
+
+.bg-present {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--color-present)/var(--tw-bg-opacity))
+}
+
+.bg-key {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--key-bg)/var(--tw-bg-opacity))
+}
+
+.bg-correct {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--color-correct)/var(--tw-bg-opacity))
+}
