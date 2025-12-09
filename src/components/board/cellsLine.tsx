@@ -27,7 +27,6 @@ const CellsLine = ({ line }: CellsLineProps) => {
             indexInLine={index}
             letter={letter}
             cellColor={color ? (color as "G" | "Y" | "B" | "D") : "D"}
-            indexInLine={index}
           />
         );
       })}
