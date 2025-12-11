@@ -1,11 +1,11 @@
 import { ConfigProvider, message, Modal } from "antd";
 import { useCallback, useEffect, useState } from "react";
+import { latinToRussianMapper } from "../mappers/keyMapper";
 import { getRandomWord, words } from "../resources/words";
 import Board from "./board/board";
 import Header from "./header/header";
 import Keyboard from "./keyboard/keyboard";
 import EndGamePopup from "./popups/endGamePopup";
-import { latinToRussianMapper } from "../mappers/keyMapper";
 
 export type keyboardColorsType = {
   black: Set<string>;
@@ -19,7 +19,9 @@ export type popupStateType = {
 };
 
 const GameWrapper = () => {
-  const startDate = new Date("11.18.2025");
+  const currentDay = Math.floor(
+    (Date.now() - new Date("11.18.2025").getTime()) / (1000 * 60 * 60 * 24),
+  );
   const [dayWord, setDayWord] = useState<string>("");
   const [wordBoard, setWordBoard] = useState<string[][]>(new Array(6).fill([]));
   const [activeLine, setActiveLine] = useState<number>(0);
@@ -58,7 +60,11 @@ const GameWrapper = () => {
   }, [wordBoard, activeLine, gameStatus]);
 
   const validate = useCallback(
-    (word: string) => {
+    (
+      word: string,
+      currentWordBoard?: string[][], // ToDo: пофиксить костыль :) C НГ ребят :)
+      currentActiveLine?: number,
+    ) => {
       const greenLetters = keyboardColors.green;
       const yellowLetters = keyboardColors.yellow;
       const blackLetters = keyboardColors.black;
@@ -92,10 +98,19 @@ const GameWrapper = () => {
           blackLetters.add(guess[i]);
         }
       }
-
-      setWordBoard(
-        wordBoard.map((arr, index) => (index === activeLine ? result : arr)),
-      );
+      if (currentWordBoard && currentActiveLine) {
+        console.log("qweasdzxc");
+        console.log(activeLine);
+        setWordBoard(
+          currentWordBoard.map((arr, index) =>
+            index === currentActiveLine ? result : arr,
+          ),
+        );
+      } else {
+        setWordBoard(
+          wordBoard.map((arr, index) => (index === activeLine ? result : arr)),
+        );
+      }
 
       setKeyboardColors({
         green: greenLetters,
@@ -142,35 +157,68 @@ const GameWrapper = () => {
         return;
       }
       validate(currentWord);
+      localStorage.setItem(
+        "gameState",
+        JSON.stringify({
+          board: wordBoard,
+          activeLine: activeLine,
+          currentDay: currentDay,
+        }),
+      );
     }
-  }, [wordBoard, activeLine, wordsBank, validate, messageApi, gameStatus]);
+  }, [
+    gameStatus,
+    wordBoard,
+    activeLine,
+    wordsBank,
+    validate,
+    currentDay,
+    messageApi,
+  ]);
 
   useEffect(() => {
     setWordsBank(words);
     setDayWord(getRandomWord());
-    console.log(dayWord);
-  }, [dayWord]);
+  }, []);
+
+  useEffect(() => {
+    if (wordBoard[0].length === 0 && dayWord !== "") {
+      const gameState = JSON.parse(localStorage.getItem("gameState") || "{}");
+      if (gameState.currentDay === currentDay && gameState.board) {
+        setWordBoard(gameState.board);
+        setActiveLine(gameState.activeLine);
+        validate(
+          gameState.board[gameState.activeLine]
+            .map((i: string) => i[0])
+            .join(""),
+          gameState.board,
+          gameState.activeLine,
+        );
+      }
+    }
+  }, [currentDay, dayWord, validate, wordBoard]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (/^[а-яё]$/i.test(e.key)) {
         handleKeyboardInput(e.key);
-      } else
-      if (latinToRussianMapper[e.key]) {
-        handleKeyboardInput(latinToRussianMapper[e.key])
-      }  else
-      if (e.key === "Backspace") {
+      } else if (latinToRussianMapper[e.key]) {
+        handleKeyboardInput(latinToRussianMapper[e.key]);
+      } else if (e.key === "Backspace") {
         handleDelete();
-      } else
-      if (e.key === "Enter") {
+      } else if (e.key === "Enter") {
         handleCheck();
-      } 
+      }
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleCheck, handleDelete, handleKeyboardInput]);
+
+  useEffect(() => {
+    console.log(wordBoard);
+  }, [wordBoard]);
 
   return (
     <div className="h-screen container mx-auto flex flex-col max-w-md">
@@ -186,7 +234,7 @@ const GameWrapper = () => {
       >
         {contextHolder}
       </ConfigProvider>
-      <Header />
+      <Header currentDay={currentDay} />
       <Board wordBoardLines={wordBoard} />
       <Keyboard
         onKeyboardInput={handleKeyboardInput}
@@ -195,7 +243,7 @@ const GameWrapper = () => {
         keyboardColors={keyboardColors}
       />
       <Modal
-        title={`WORDLE DAY #${Math.floor((Date.now() - startDate.getTime()) / (1000 * 60 * 60 * 24))} ${activeLine + 1}/6`}
+        title={`WORDLE DAY #${currentDay} ${activeLine + 1}/6`}
         closable={{ "aria-label": "Custom Close Button" }}
         open={popupStates?.isPopupOpen}
         onCancel={() => setPopupStates(undefined)}
