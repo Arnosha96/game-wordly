@@ -1,4 +1,4 @@
-import { ConfigProvider, message, Modal } from "antd";
+import { Button, ConfigProvider, message, Modal, Space } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { latinToRussianMapper } from "../mappers/keyMapper";
 import { getRandomWord, words } from "../resources/words";
@@ -34,7 +34,11 @@ const GameWrapper = () => {
     yellow: new Set(),
     green: new Set(),
   });
-  const [popupStates, setPopupStates] = useState<popupStateType>();
+  const [endGamePopupStates, setEndGamePopupStates] =
+    useState<popupStateType>();
+  const [dayWordByFriend, setDayWordByFriend] = useState<boolean>(false);
+  const [badWordByFriendPopupStatus, setBadWordByFriendPopupStatus] =
+    useState<boolean>();
   const [messageApi, contextHolder] = message.useMessage();
 
   const handleKeyboardInput = useCallback(
@@ -99,8 +103,6 @@ const GameWrapper = () => {
         }
       }
       if (currentWordBoard && currentActiveLine) {
-        console.log("qweasdzxc");
-        console.log(activeLine);
         setWordBoard(
           currentWordBoard.map((arr, index) =>
             index === currentActiveLine ? result : arr,
@@ -120,7 +122,7 @@ const GameWrapper = () => {
 
       if (word === dayWord) {
         setGameStatus("Game Over");
-        setPopupStates({
+        setEndGamePopupStates({
           isPopupOpen: true,
           popupStatus: "WIN",
         });
@@ -129,7 +131,7 @@ const GameWrapper = () => {
 
       if (activeLine === 5) {
         setGameStatus("Game Over");
-        setPopupStates({
+        setEndGamePopupStates({
           isPopupOpen: true,
           popupStatus: "LOSE",
         });
@@ -175,10 +177,28 @@ const GameWrapper = () => {
     currentDay,
     messageApi,
   ]);
-
+  //%D0%BF%D1%80%D0%BE%D0%B7%D0%B0
   useEffect(() => {
-    setWordsBank(words);
-    setDayWord(getRandomWord());
+    try {
+      setWordsBank(words);
+      const pathname = window.location.pathname.split("/")[2];
+      if (pathname) {
+        const currentDayWord = decodeURIComponent(pathname as string);
+        setDayWord(currentDayWord);
+        setDayWordByFriend(true);
+      } else {
+        setDayWord(getRandomWord());
+      }
+
+      const qweasd = prompt("введите хрень");
+      console.log(decodeURIComponent(qweasd as string));
+    } catch (error) {
+      if (error instanceof URIError) {
+        setBadWordByFriendPopupStatus(true);
+      } else {
+        console.error(error);
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -234,7 +254,7 @@ const GameWrapper = () => {
       >
         {contextHolder}
       </ConfigProvider>
-      <Header currentDay={currentDay} />
+      <Header currentDay={currentDay} dayWordByFriend={dayWordByFriend} />
       <Board wordBoardLines={wordBoard} />
       <Keyboard
         onKeyboardInput={handleKeyboardInput}
@@ -244,15 +264,37 @@ const GameWrapper = () => {
       />
       <Modal
         title={`WORDLE DAY #${currentDay} ${activeLine + 1}/6`}
-        closable={{ "aria-label": "Custom Close Button" }}
-        open={popupStates?.isPopupOpen}
-        onCancel={() => setPopupStates(undefined)}
+        open={endGamePopupStates?.isPopupOpen}
+        onCancel={() => setEndGamePopupStates(undefined)}
         footer={null}
       >
         <EndGamePopup
           wordBoardLines={wordBoard}
-          popupStatus={popupStates?.popupStatus}
+          popupStatus={endGamePopupStates?.popupStatus}
         />
+      </Modal>
+      <Modal
+        title={
+          <Space className="w-full" direction="vertical" align="center">
+            ЭТО СЛОВО НЕ ПОДДЕРЖИВАЕТСЯ
+          </Space>
+        }
+        open={badWordByFriendPopupStatus}
+        onCancel={() => setBadWordByFriendPopupStatus(false)}
+        footer={
+          <Space className="w-full" direction="vertical" align="center">
+            <Button
+              key="back"
+              onClick={() => setBadWordByFriendPopupStatus(false)}
+            >
+              Отгадать слово дня
+            </Button>
+          </Space>
+        }
+      >
+        <Space className="w-full" direction="vertical" align="center">
+          Упс! К сожалению, это слово не поддерживается.{" "}
+        </Space>
       </Modal>
     </div>
   );
