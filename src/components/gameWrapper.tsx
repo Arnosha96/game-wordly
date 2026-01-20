@@ -36,6 +36,8 @@ const GameWrapper = () => {
   });
   const [endGamePopupStates, setEndGamePopupStates] =
     useState<popupStateType>();
+  const [createWordByFriendPopupStates, setCreateWordByFriendPopupStates] =
+    useState<boolean>();
   const [dayWordByFriend, setDayWordByFriend] = useState<boolean>(false);
   const [badWordByFriendPopupStatus, setBadWordByFriendPopupStatus] =
     useState<boolean>();
@@ -190,8 +192,8 @@ const GameWrapper = () => {
         setDayWord(getRandomWord());
       }
 
-      const qweasd = prompt("введите хрень");
-      console.log(decodeURIComponent(qweasd as string));
+      // const qweasd = prompt("введите хрень");
+      // console.log(decodeURIComponent(qweasd as string));
     } catch (error) {
       if (error instanceof URIError) {
         setBadWordByFriendPopupStatus(true);
@@ -254,7 +256,11 @@ const GameWrapper = () => {
       >
         {contextHolder}
       </ConfigProvider>
-      <Header currentDay={currentDay} dayWordByFriend={dayWordByFriend} />
+      <Header
+        currentDay={currentDay}
+        dayWordByFriend={dayWordByFriend}
+        createWordByFriend={() => setCreateWordByFriendPopupStates(true)}
+      />
       <Board wordBoardLines={wordBoard} />
       <Keyboard
         onKeyboardInput={handleKeyboardInput}
@@ -295,6 +301,23 @@ const GameWrapper = () => {
         <Space className="w-full" direction="vertical" align="center">
           Упс! К сожалению, это слово не поддерживается.{" "}
         </Space>
+      </Modal>
+      <Modal
+        width={400}
+        title={<Space className="w-full" direction="vertical" align="center">
+            ЗАГАДАТЬ СЛОВО ДРУГУ
+          </Space>}
+        open={createWordByFriendPopupStates}
+        onCancel={() => setCreateWordByFriendPopupStates(false)}
+        footer={
+          <Space className="w-full" direction="vertical" align="center">
+            <Button color="green" variant="solid" size="large">
+              Скопировать
+            </Button>
+          </Space>
+        }
+      >
+        {"Ввести слово"}
       </Modal>
     </div>
   );
