@@ -1,10 +1,12 @@
-import { Button, ConfigProvider, message, Modal, Space } from "antd";
+import { ConfigProvider, message } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { latinToRussianMapper } from "../mappers/keyMapper";
 import { getRandomWord, words } from "../resources/words";
 import Board from "./board/board";
 import Header from "./header/header";
 import Keyboard from "./keyboard/keyboard";
+import BadWordByFriendPopup from "./popups/badWordByFriendPopup";
+import CreateWordByFriendPopup from "./popups/createWordByFriendPopup";
 import EndGamePopup from "./popups/endGamePopup";
 
 export type keyboardColorsType = {
@@ -221,22 +223,24 @@ const GameWrapper = () => {
   }, [currentDay, dayWord, validate, wordBoard]);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (/^[а-яё]$/i.test(e.key)) {
-        handleKeyboardInput(e.key);
-      } else if (latinToRussianMapper[e.key]) {
-        handleKeyboardInput(latinToRussianMapper[e.key]);
-      } else if (e.key === "Backspace") {
-        handleDelete();
-      } else if (e.key === "Enter") {
-        handleCheck();
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleCheck, handleDelete, handleKeyboardInput]);
+    if (!createWordByFriendPopupStates) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (/^[а-яё]$/i.test(e.key)) {
+          handleKeyboardInput(e.key);
+        } else if (latinToRussianMapper[e.key]) {
+          handleKeyboardInput(latinToRussianMapper[e.key]);
+        } else if (e.key === "Backspace") {
+          handleDelete();
+        } else if (e.key === "Enter") {
+          handleCheck();
+        }
+      };
+      document.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [createWordByFriendPopupStates, handleCheck, handleDelete, handleKeyboardInput]);
 
   useEffect(() => {
     console.log(wordBoard);
@@ -268,57 +272,21 @@ const GameWrapper = () => {
         onCheck={handleCheck}
         keyboardColors={keyboardColors}
       />
-      <Modal
+      <EndGamePopup
         title={`WORDLE DAY #${currentDay} ${activeLine + 1}/6`}
-        open={endGamePopupStates?.isPopupOpen}
+        isPopupOpen={endGamePopupStates?.isPopupOpen}
         onCancel={() => setEndGamePopupStates(undefined)}
-        footer={null}
-      >
-        <EndGamePopup
-          wordBoardLines={wordBoard}
-          popupStatus={endGamePopupStates?.popupStatus}
-        />
-      </Modal>
-      <Modal
-        title={
-          <Space className="w-full" direction="vertical" align="center">
-            ЭТО СЛОВО НЕ ПОДДЕРЖИВАЕТСЯ
-          </Space>
-        }
-        open={badWordByFriendPopupStatus}
+        wordBoardLines={wordBoard}
+        popupStatus={endGamePopupStates?.popupStatus}
+      />
+      <BadWordByFriendPopup
+        isPopupOpen={badWordByFriendPopupStatus}
         onCancel={() => setBadWordByFriendPopupStatus(false)}
-        footer={
-          <Space className="w-full" direction="vertical" align="center">
-            <Button
-              key="back"
-              onClick={() => setBadWordByFriendPopupStatus(false)}
-            >
-              Отгадать слово дня
-            </Button>
-          </Space>
-        }
-      >
-        <Space className="w-full" direction="vertical" align="center">
-          Упс! К сожалению, это слово не поддерживается.{" "}
-        </Space>
-      </Modal>
-      <Modal
-        width={400}
-        title={<Space className="w-full" direction="vertical" align="center">
-            ЗАГАДАТЬ СЛОВО ДРУГУ
-          </Space>}
-        open={createWordByFriendPopupStates}
+      />
+      <CreateWordByFriendPopup
+        isPopupOpen={createWordByFriendPopupStates}
         onCancel={() => setCreateWordByFriendPopupStates(false)}
-        footer={
-          <Space className="w-full" direction="vertical" align="center">
-            <Button color="green" variant="solid" size="large">
-              Скопировать
-            </Button>
-          </Space>
-        }
-      >
-        {"Ввести слово"}
-      </Modal>
+      />
     </div>
   );
 };
