@@ -163,14 +163,16 @@ const GameWrapper = () => {
         return;
       }
       validate(currentWord);
-      localStorage.setItem(
-        "gameState",
-        JSON.stringify({
-          board: wordBoard,
-          activeLine: activeLine,
-          currentDay: currentDay,
-        }),
-      );
+      if (!dayWordByFriend) {
+        localStorage.setItem(
+          "gameState",
+          JSON.stringify({
+            board: wordBoard,
+            activeLine: activeLine,
+            currentDay: currentDay,
+          }),
+        );
+      }
     }
   }, [
     gameStatus,
@@ -180,22 +182,25 @@ const GameWrapper = () => {
     validate,
     currentDay,
     messageApi,
+    dayWordByFriend,
   ]);
   //%D0%BF%D1%80%D0%BE%D0%B7%D0%B0
   useEffect(() => {
     try {
       setWordsBank(words);
-      const pathname = window.location.pathname.split("/")[2];
+      const pathname = window.location.pathname.split("/")[1];
       if (pathname) {
-        const currentDayWord = decodeURIComponent(pathname as string);
+        const currentDayWord = decodeURIComponent(
+          pathname.replaceAll("-", "%"),
+        );
         setDayWord(currentDayWord);
         setDayWordByFriend(true);
+        if (!wordsBank?.includes(currentDayWord)) {
+          setWordsBank((prev) => (!prev ? prev : [...prev, currentDayWord]));
+        }
       } else {
         setDayWord(getRandomWord());
       }
-
-      // const qweasd = prompt("введите хрень");
-      // console.log(decodeURIComponent(qweasd as string));
     } catch (error) {
       if (error instanceof URIError) {
         setBadWordByFriendPopupStatus(true);
@@ -206,7 +211,7 @@ const GameWrapper = () => {
   }, []);
 
   useEffect(() => {
-    if (wordBoard[0].length === 0 && dayWord !== "") {
+    if (wordBoard[0].length === 0 && dayWord !== "" && !dayWordByFriend) {
       const gameState = JSON.parse(localStorage.getItem("gameState") || "{}");
       if (gameState.currentDay === currentDay && gameState.board) {
         setWordBoard(gameState.board);
@@ -220,7 +225,7 @@ const GameWrapper = () => {
         );
       }
     }
-  }, [currentDay, dayWord, validate, wordBoard]);
+  }, [currentDay, dayWord, validate, wordBoard, dayWordByFriend]);
 
   useEffect(() => {
     if (!createWordByFriendPopupStates) {
@@ -240,7 +245,12 @@ const GameWrapper = () => {
         document.removeEventListener("keydown", handleKeyDown);
       };
     }
-  }, [createWordByFriendPopupStates, handleCheck, handleDelete, handleKeyboardInput]);
+  }, [
+    createWordByFriendPopupStates,
+    handleCheck,
+    handleDelete,
+    handleKeyboardInput,
+  ]);
 
   useEffect(() => {
     console.log(wordBoard);
@@ -286,6 +296,7 @@ const GameWrapper = () => {
       <CreateWordByFriendPopup
         isPopupOpen={createWordByFriendPopupStates}
         onCancel={() => setCreateWordByFriendPopupStates(false)}
+        messageApi={messageApi}
       />
     </div>
   );
