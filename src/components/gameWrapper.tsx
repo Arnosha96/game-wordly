@@ -70,7 +70,7 @@ const GameWrapper = () => {
   const validate = useCallback(
     (
       word: string,
-      currentWordBoard?: string[][], // ToDo: пофиксить костыль :) C НГ ребят :)
+      currentWordBoard?: string[][],
       currentActiveLine?: number,
     ) => {
       const greenLetters = keyboardColors.green;
@@ -184,7 +184,7 @@ const GameWrapper = () => {
     messageApi,
     dayWordByFriend,
   ]);
-  //%D0%BF%D1%80%D0%BE%D0%B7%D0%B0
+  
   useEffect(() => {
     try {
       setWordsBank(words);
@@ -208,7 +208,7 @@ const GameWrapper = () => {
         console.error(error);
       }
     }
-  }, []);
+  }, [wordsBank]);
 
   useEffect(() => {
     if (wordBoard[0].length === 0 && dayWord !== "" && !dayWordByFriend) {
@@ -251,10 +251,6 @@ const GameWrapper = () => {
     handleDelete,
     handleKeyboardInput,
   ]);
-
-  useEffect(() => {
-    console.log(wordBoard);
-  }, [wordBoard]);
 
   return (
     <div className="h-screen container mx-auto flex flex-col max-w-md">
