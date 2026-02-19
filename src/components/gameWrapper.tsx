@@ -83,6 +83,15 @@ const GameWrapper = () => {
 
       const remainingLetters: string[] = [];
 
+      if (currentActiveLine === 5) {
+        setGameStatus("Game Over");
+        setEndGamePopupStates({
+          isPopupOpen: true,
+          popupStatus: "LOSE",
+        });
+        return;
+      }
+
       for (let i = 0; i < 5; i++) {
         if (guess[i] === target[i]) {
           result[i] = `${guess[i]}:G`;
