@@ -2,7 +2,7 @@
   "name": "game-wordly",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://Arnosha96.github.io/game-wordly",
+  "homepage": "https://Arnosha96.github.io/game-wordly/",
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
     "@testing-library/dom": "^10.4.1",

@@ -189,7 +189,7 @@ const GameWrapper = () => {
     try {
       setWordsBank(words);
       const pathname = window.location.pathname.split("/").at(-1);
-      if (pathname) {
+      if (pathname && pathname !== 'game-wordly') {
         const currentDayWord = decodeURIComponent(
           pathname.replaceAll("-", "%"),
         );
