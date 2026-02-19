@@ -15,7 +15,7 @@ const CreateWordByFriendPopup = ({
   const [form] = Form.useForm();
   const handleCreateWordByFriend = async () => {
     const value = await form.validateFields();
-    const url = `${window.location.origin}/${encodeURIComponent(value.word).replaceAll("%", "-")}`;
+    const url = `${window.location.origin}/game-wordly/${encodeURIComponent(value.word).replaceAll("%", "-")}`;
     navigator.clipboard
       .writeText(url)
       .then(() => {

@@ -188,7 +188,7 @@ const GameWrapper = () => {
   useEffect(() => {
     try {
       setWordsBank(words);
-      const pathname = window.location.pathname.split("/")[1];
+      const pathname = window.location.pathname.split("/").at(-1);
       if (pathname) {
         const currentDayWord = decodeURIComponent(
           pathname.replaceAll("-", "%"),
