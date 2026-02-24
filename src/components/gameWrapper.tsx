@@ -193,15 +193,14 @@ const GameWrapper = () => {
     messageApi,
     dayWordByFriend,
   ]);
-  
+
   useEffect(() => {
     try {
       setWordsBank(words);
-      const pathname = window.location.pathname.split("/").at(-1);
-      if (pathname && pathname !== 'game-wordly') {
-        const currentDayWord = decodeURIComponent(
-          pathname.replaceAll("-", "%"),
-        );
+      const params = new URLSearchParams(window.location.search);
+      const word = params.get("word_id");
+      if (word) {
+        const currentDayWord = decodeURIComponent(atob(word));
         setDayWord(currentDayWord);
         setDayWordByFriend(true);
         if (!wordsBank?.includes(currentDayWord)) {

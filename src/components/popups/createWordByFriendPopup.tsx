@@ -1,4 +1,4 @@
-import { Button, Flex, Form, Input, message, Modal, Space } from "antd";
+import { Button, Flex, Form, Input, Modal, Space } from "antd";
 import { MessageInstance } from "antd/es/message/interface";
 
 type CreateWordByFriendPopupProps = {
@@ -15,7 +15,7 @@ const CreateWordByFriendPopup = ({
   const [form] = Form.useForm();
   const handleCreateWordByFriend = async () => {
     const value = await form.validateFields();
-    const url = `${window.location.origin}/game-wordly/${encodeURIComponent(value.word).replaceAll("%", "-")}`;
+    const url = `${window.location.origin}/game-wordly?word_id=${btoa(encodeURIComponent(value.word))}`;
     navigator.clipboard
       .writeText(url)
       .then(() => {
