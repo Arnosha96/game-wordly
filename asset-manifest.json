@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/game-wordly/static/css/main.361721fa.css",
-    "main.js": "/game-wordly/static/js/main.a3f3d832.js",
+    "main.js": "/game-wordly/static/js/main.03eea5df.js",
     "static/js/453.08fe429d.chunk.js": "/game-wordly/static/js/453.08fe429d.chunk.js",
     "index.html": "/game-wordly/index.html",
     "main.361721fa.css.map": "/game-wordly/static/css/main.361721fa.css.map",
-    "main.a3f3d832.js.map": "/game-wordly/static/js/main.a3f3d832.js.map",
+    "main.03eea5df.js.map": "/game-wordly/static/js/main.03eea5df.js.map",
     "453.08fe429d.chunk.js.map": "/game-wordly/static/js/453.08fe429d.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.361721fa.css",
-    "static/js/main.a3f3d832.js"
+    "static/js/main.03eea5df.js"
   ]
 }
